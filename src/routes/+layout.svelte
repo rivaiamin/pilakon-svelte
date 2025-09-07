@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { supabase } from '$lib/supabase';
+  import { Home, Search, Plus, User } from 'lucide-svelte';
   import '../app.css';
 
   export let data;
@@ -36,10 +37,10 @@
   }
 
   const navigationItems = [
-    { name: 'Home', href: '/', icon: '🏠' },
-    { name: 'Explore', href: '/explore', icon: '🔍' },
-    { name: 'Create', href: '/create', icon: '➕' },
-    { name: 'Profile', href: '/profile', icon: '👤' }
+    { name: 'Home', href: '/', icon: Home },
+    { name: 'Explore', href: '/explore', icon: Search },
+    { name: 'Create', href: '/create', icon: Plus },
+    { name: 'Profile', href: '/profile', icon: User }
   ];
 </script>
 
@@ -86,7 +87,7 @@
         class="bottom-nav-item"
         class:active={$page.url.pathname === item.href}
       >
-        <span class="nav-icon">{item.icon}</span>
+        <svelte:component this={item.icon} class="nav-icon" size={20} />
         <span class="nav-label">{item.name}</span>
       </a>
     {/each}
@@ -227,8 +228,8 @@
   }
 
   .nav-icon {
-    font-size: 1.25rem;
     margin-bottom: 0.25rem;
+    color: inherit;
   }
 
   .nav-label {
