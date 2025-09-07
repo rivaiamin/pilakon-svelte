@@ -9,12 +9,20 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"lint": "prettier --check .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"docker:build": "docker build -t pilakon-svelte .",
+		"docker:build:prod": "docker build --build-arg PUBLIC_SUPABASE_URL=$PUBLIC_SUPABASE_URL --build-arg PUBLIC_SUPABASE_ANON_KEY=$PUBLIC_SUPABASE_ANON_KEY -t pilakon-svelte .",
+		"docker:run": "docker run -p 3000:3000 pilakon-svelte",
+		"docker:dev": "docker compose --profile dev up app-dev",
+		"docker:prod": "docker compose up app",
+		"docker:nginx": "docker compose up nginx app",
+		"docker:nginx:build": "docker compose build nginx app",
+		"docker:down": "docker compose down"
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^5.2.6",
 		"@neoconfetti/svelte": "^2.2.2",
-		"@sveltejs/adapter-auto": "^3.3.1",
+		"@sveltejs/adapter-node": "^3.0.3",
 		"@sveltejs/kit": "^2.37.1",
 		"@sveltejs/vite-plugin-svelte": "^3.1.2",
 		"autoprefixer": "^10.4.21",

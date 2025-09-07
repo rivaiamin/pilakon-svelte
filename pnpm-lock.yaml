@@ -24,9 +24,9 @@ importers:
       '@neoconfetti/svelte':
         specifier: ^2.2.2
         version: 2.2.2(svelte@4.2.20)
-      '@sveltejs/adapter-auto':
-        specifier: ^3.3.1
-        version: 3.3.1(@sveltejs/kit@2.37.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))
+      '@sveltejs/adapter-node':
+        specifier: ^3.0.3
+        version: 3.0.3(@sveltejs/kit@2.37.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))
       '@sveltejs/kit':
         specifier: ^2.37.1
         version: 2.37.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1))
@@ -253,6 +253,42 @@ packages:
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
+  '@rollup/plugin-commonjs@25.0.8':
+    resolution: {integrity: sha512-ZEZWTK5n6Qde0to4vS9Mr5x/0UZoqCxPVR9KRUjU4kA2sO7GEUn1fop0DAwpO6z0Nw/kJON9bDmSxdWxO/TT1A==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.68.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/plugin-json@6.1.0':
+    resolution: {integrity: sha512-EGI2te5ENk1coGeADSIwZ7G2Q8CJS2sF120T7jLw4xFw9n7wIOXHo+kIYRAoVpJAN+kmqZSoO3Fp4JtoNF4ReA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/plugin-node-resolve@15.3.1':
+    resolution: {integrity: sha512-tgg6b91pAybXHJQMAAwW9VuWBO6Thi+q7BCNARLwSqlmsHz0XYURtGvh/AuwSADXSI4h/2uHbs7s4FzlZDGSGA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.78.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/pluginutils@5.3.0':
+    resolution: {integrity: sha512-5EdhGZtnu3V88ces7s53hhfK5KSASnJZv8Lulpc04cWO3REESroJXg73DFsOmgbU2BhwV0E20bu2IDZb3VKW4Q==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
   '@rollup/rollup-android-arm-eabi@4.50.0':
     resolution: {integrity: sha512-lVgpeQyy4fWN5QYebtW4buT/4kn4p4IJ+kDNB4uYNT5b8c8DLJDg6titg20NIg7E8RWwdWZORW6vUFfrLyG3KQ==}
     cpu: [arm]
@@ -401,8 +437,8 @@ packages:
     peerDependencies:
       acorn: ^8.9.0
 
-  '@sveltejs/adapter-auto@3.3.1':
-    resolution: {integrity: sha512-5Sc7WAxYdL6q9j/+D0jJKjGREGlfIevDyHSQ2eNETHcB1TKlQWHcAo8AS8H1QdjNvSXpvOwNjykDUHPEAyGgdQ==}
+  '@sveltejs/adapter-node@3.0.3':
+    resolution: {integrity: sha512-tYs13Xs0NLYXy4XMGrPUupKdBYqvMQ/IZ4OSmv53LudHgcthZCZD3fXrPLvbsSW3EapKl5/8AQZxTYbwUMZbKw==}
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
 
@@ -448,6 +484,9 @@ packages:
 
   '@types/pug@2.0.10':
     resolution: {integrity: sha512-Sk/uYFOBAB7mb74XcpizmH0KOR2Pv3D2Hmrh1Dmy5BmK3MpdSa5kqZcg6EKBdklU0bFXX9gCfzvpnyUehrPIuA==}
+
+  '@types/resolve@1.20.2':
+    resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
 
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
@@ -549,6 +588,9 @@ packages:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
     engines: {node: '>= 6'}
 
+  commondir@1.0.1:
+    resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
+
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
@@ -622,6 +664,9 @@ packages:
   esm-env@1.2.2:
     resolution: {integrity: sha512-Epxrv+Nr/CaL4ZcFGPJIYLWFom+YeV1DqMLHJoEd9SYRxNbaFruBwfEX/kkHUJf55j2+TUbmDcmuilbP1TmXHA==}
 
+  estree-walker@2.0.2:
+    resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
+
   estree-walker@3.0.3:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
 
@@ -670,15 +715,17 @@ packages:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     deprecated: Glob versions prior to v9 are no longer supported
 
+  glob@8.1.0:
+    resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
+    engines: {node: '>=12'}
+    deprecated: Glob versions prior to v9 are no longer supported
+
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
-
-  import-meta-resolve@4.2.0:
-    resolution: {integrity: sha512-Iqv2fzaTQN28s/FwZAoFq0ZSs/7hMAHJVX+w8PZl3cY19Pxk6jFFalxQoIfW2826i/fDLXv8IiEZRIT0lDuWcg==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -707,9 +754,15 @@ packages:
     resolution: {integrity: sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==}
     engines: {node: '>=0.10.0'}
 
+  is-module@1.0.0:
+    resolution: {integrity: sha512-51ypPSPCoTEIN9dy5Oy+h4pShgJmPCygKfyRCISBI+JoWT/2oJvK8QPxmwv7b/p239jXrm9M1mlQbyKJ5A152g==}
+
   is-number@7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
+
+  is-reference@1.2.1:
+    resolution: {integrity: sha512-U82MsXXiFIrjCK4otLT+o2NA2Cd2g5MLoOVXUZjIOhLurrRxpEXzI8O0KZHr3IjLvlAH1kTPYSuqer5T9ZVBKQ==}
 
   is-reference@3.0.3:
     resolution: {integrity: sha512-ixkJoqQvAP88E6wLydLGGqCJsrFUnqoH6HnaczB8XmDH1oaWU+xxdptvikTgaEhtZ53Ky6YXiBuUI2WXLMCwjw==}
@@ -764,6 +817,10 @@ packages:
 
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
+
+  minimatch@5.1.6:
+    resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
+    engines: {node: '>=10'}
 
   minimatch@9.0.5:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
@@ -848,6 +905,10 @@ packages:
   picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
+
+  picomatch@4.0.3:
+    resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
+    engines: {node: '>=12'}
 
   pify@2.3.0:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
@@ -1307,6 +1368,41 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
+  '@rollup/plugin-commonjs@25.0.8(rollup@4.50.0)':
+    dependencies:
+      '@rollup/pluginutils': 5.3.0(rollup@4.50.0)
+      commondir: 1.0.1
+      estree-walker: 2.0.2
+      glob: 8.1.0
+      is-reference: 1.2.1
+      magic-string: 0.30.18
+    optionalDependencies:
+      rollup: 4.50.0
+
+  '@rollup/plugin-json@6.1.0(rollup@4.50.0)':
+    dependencies:
+      '@rollup/pluginutils': 5.3.0(rollup@4.50.0)
+    optionalDependencies:
+      rollup: 4.50.0
+
+  '@rollup/plugin-node-resolve@15.3.1(rollup@4.50.0)':
+    dependencies:
+      '@rollup/pluginutils': 5.3.0(rollup@4.50.0)
+      '@types/resolve': 1.20.2
+      deepmerge: 4.3.1
+      is-module: 1.0.0
+      resolve: 1.22.10
+    optionalDependencies:
+      rollup: 4.50.0
+
+  '@rollup/pluginutils@5.3.0(rollup@4.50.0)':
+    dependencies:
+      '@types/estree': 1.0.8
+      estree-walker: 2.0.2
+      picomatch: 4.0.3
+    optionalDependencies:
+      rollup: 4.50.0
+
   '@rollup/rollup-android-arm-eabi@4.50.0':
     optional: true
 
@@ -1429,10 +1525,13 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
-  '@sveltejs/adapter-auto@3.3.1(@sveltejs/kit@2.37.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))':
+  '@sveltejs/adapter-node@3.0.3(@sveltejs/kit@2.37.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))':
     dependencies:
+      '@rollup/plugin-commonjs': 25.0.8(rollup@4.50.0)
+      '@rollup/plugin-json': 6.1.0(rollup@4.50.0)
+      '@rollup/plugin-node-resolve': 15.3.1(rollup@4.50.0)
       '@sveltejs/kit': 2.37.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1))
-      import-meta-resolve: 4.2.0
+      rollup: 4.50.0
 
   '@sveltejs/kit@2.37.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1)))(svelte@4.2.20)(vite@5.4.19(@types/node@24.3.1))':
     dependencies:
@@ -1487,6 +1586,8 @@ snapshots:
   '@types/phoenix@1.6.6': {}
 
   '@types/pug@2.0.10': {}
+
+  '@types/resolve@1.20.2': {}
 
   '@types/ws@8.18.1':
     dependencies:
@@ -1585,6 +1686,8 @@ snapshots:
 
   commander@4.1.1: {}
 
+  commondir@1.0.1: {}
+
   concat-map@0.0.1: {}
 
   cookie@0.6.0: {}
@@ -1656,6 +1759,8 @@ snapshots:
 
   esm-env@1.2.2: {}
 
+  estree-walker@2.0.2: {}
+
   estree-walker@3.0.3:
     dependencies:
       '@types/estree': 1.0.8
@@ -1716,13 +1821,19 @@ snapshots:
       once: 1.4.0
       path-is-absolute: 1.0.1
 
+  glob@8.1.0:
+    dependencies:
+      fs.realpath: 1.0.0
+      inflight: 1.0.6
+      inherits: 2.0.4
+      minimatch: 5.1.6
+      once: 1.4.0
+
   graceful-fs@4.2.11: {}
 
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
-
-  import-meta-resolve@4.2.0: {}
 
   inflight@1.0.6:
     dependencies:
@@ -1747,7 +1858,13 @@ snapshots:
     dependencies:
       is-extglob: 2.1.1
 
+  is-module@1.0.0: {}
+
   is-number@7.0.0: {}
+
+  is-reference@1.2.1:
+    dependencies:
+      '@types/estree': 1.0.8
 
   is-reference@3.0.3:
     dependencies:
@@ -1793,6 +1910,10 @@ snapshots:
   minimatch@3.1.2:
     dependencies:
       brace-expansion: 1.1.12
+
+  minimatch@5.1.6:
+    dependencies:
+      brace-expansion: 2.0.2
 
   minimatch@9.0.5:
     dependencies:
@@ -1856,6 +1977,8 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@2.3.1: {}
+
+  picomatch@4.0.3: {}
 
   pify@2.3.0: {}
 

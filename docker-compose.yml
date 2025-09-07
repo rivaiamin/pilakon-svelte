@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # SvelteKit application
+  app:
+    image: pilakon-svelte
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      # Add your environment variables here
+      - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
+      - PUBLIC_SUPABASE_ANON_KEY=${PUBLIC_SUPABASE_ANON_KEY}
+    volumes:
+      # Mount static files if needed
+      - ./static:/app/static:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app-network
+
+  # Nginx reverse proxy
+  nginx:
+    image: pilakon-svelte-nginx
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "8080:80"
+      - "8443:443"  # For future SSL setup
+    depends_on:
+      - app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app-network
+
+  # Development service (optional)
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
+      - PUBLIC_SUPABASE_ANON_KEY=${PUBLIC_SUPABASE_ANON_KEY}
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.svelte-kit
+    command: pnpm run dev
+    profiles:
+      - dev
+
+networks:
+  app-network:
+    driver: bridge
