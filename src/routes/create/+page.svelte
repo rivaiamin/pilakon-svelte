@@ -1,9 +1,19 @@
-<script>
+<script lang="ts">
   import { dndzone } from 'svelte-dnd-action';
+
+  type Panel = {
+    id: number | null;
+    image: string;
+    text: string;
+    width: 'full' | 'half' | 'third';
+    textPosition: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+    textStyle: 'normal' | 'narration' | 'shouting' | 'thinking';
+  };
   
-  let panels = [];
-  let selectedPanelId = null;
-  let currentPanel = {
+  let panels: Panel[] = [];
+  let selectedPanelId: number | null = null;
+  let currentPanel: Panel = {
+    id: null,
     image: '',
     text: '',
     width: 'full',
@@ -29,6 +39,7 @@
   const addPanel = () => {
     panels = [...panels, { ...currentPanel, id: Date.now() }];
     currentPanel = {
+      id: null,
       image: '',
       text: '',
       width: 'full',
@@ -37,22 +48,22 @@
     };
   };
 
-  const removePanel = (id) => {
+  const removePanel = (id: number | null) => {
     panels = panels.filter(panel => panel.id !== id);
     if (selectedPanelId === id) {
       selectedPanelId = null;
     }
   };
 
-  const handleDndConsider = (e) => {
+  const handleDndConsider = (e: CustomEvent) => {
     panels = e.detail.items;
   };
 
-  const handleDndFinalize = (e) => {
+  const handleDndFinalize = (e: CustomEvent) => {
     panels = e.detail.items;
   };
 
-  const selectPanel = (id) => {
+  const selectPanel = (id: number | null) => {
     selectedPanelId = id;
     const panel = panels.find(p => p.id === id);
     if (panel) {
