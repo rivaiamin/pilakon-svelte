@@ -6,7 +6,7 @@
 **Product Name:** Pilakon  
 **Version:** 1.0  
 **Date:** January 2025  
-**Product Manager:** [Your Name]  
+**Product Manager:** Riva'i Amin
 
 Pilakon is an innovative online motion comic platform that enables users to create engaging, interactive comics without traditional drawing skills. The platform leverages a rich library of assets, customizable panels, and scroll-based transitions to deliver an immersive storytelling experience across all devices.
 
