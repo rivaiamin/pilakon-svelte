@@ -1,15 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import type { Database } from './types';
 
 // Create Supabase client for client-side operations
-export const supabase = createClient(
+export const supabase = createClient<Database>(
     PUBLIC_SUPABASE_URL,
     PUBLIC_SUPABASE_ANON_KEY
 );
 
 // Authentication helpers
 export const auth = {
-  async signUp(email, password) {
+  async signUp(email: string, password: string) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -20,7 +21,7 @@ export const auth = {
     return { data, error };
   },
 
-  async signIn(email, password) {
+  async signIn(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -38,14 +39,14 @@ export const auth = {
     return { user, error };
   },
 
-  onAuthStateChange(callback) {
+  onAuthStateChange(callback: (event: string, session: any) => void) {
     return supabase.auth.onAuthStateChange(callback);
   }
 };
 
 // Asset management helpers
 export const assets = {
-  async uploadAsset(file, bucket = 'assets') {
+  async uploadAsset(file: File, bucket: string = 'assets') {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `${fileName}`;
@@ -65,7 +66,7 @@ export const assets = {
     return { data: { filePath, publicUrl }, error: null };
   },
 
-  async getAssets(bucket = 'assets') {
+  async getAssets(bucket: string = 'assets') {
     const { data, error } = await supabase.storage
       .from(bucket)
       .list();
@@ -73,7 +74,7 @@ export const assets = {
     return { data, error };
   },
 
-  async deleteAsset(filePath, bucket = 'assets') {
+  async deleteAsset(filePath: string, bucket: string = 'assets') {
     const { data, error } = await supabase.storage
       .from(bucket)
       .remove([filePath]);

@@ -20,7 +20,7 @@
     { id: 1, title: 'The Adventures of Luna', author: '@creative_writer', views: 1200, likes: 89, thumbnail: '📚' },
     { id: 2, title: 'Space Odyssey 2024', author: '@space_artist', views: 856, likes: 67, thumbnail: '🚀' },
     { id: 3, title: 'Mystery Manor', author: '@mystery_maker', views: 2100, likes: 156, thumbnail: '🎭' },
-    { id: 4, title: 'Dragon\'s Quest', author: '@fantasy_creator', views: 1800, likes: 134, thumbnail: '⚔️' }
+    { id: 4, title: "Dragon's Quest", author: '@fantasy_creator', views: 1800, likes: 134, thumbnail: '⚔️' }
   ];
 
   const userComics: Comic[] = [
@@ -30,6 +30,22 @@
 
   const handleComicClick = (id: number): void => {
     goto(`/comic/${id}`);
+  };
+
+  const handleCreateClick = (): void => {
+    if (session) {
+      goto('/create');
+    } else {
+      goto('/login');
+    }
+  };
+
+  const handleDashboardClick = (): void => {
+    if (session) {
+      goto('/dashboard');
+    } else {
+      goto('/login');
+    }
   };
 </script>
 
@@ -45,7 +61,7 @@
       <h1 class="hero-title">Create Amazing Motion Comics</h1>
       <p class="hero-subtitle">Bring your stories to life with interactive panels, animations, and immersive experiences</p>
       <div class="hero-actions">
-        <a href="/create" class="primary-btn">Start Creating</a>
+        <button on:click={handleCreateClick} class="primary-btn">Start Creating</button>
         <a href="/explore" class="secondary-btn">Explore Comics</a>
       </div>
     </div>
@@ -111,7 +127,7 @@
     <div class="my-comics-section">
       <div class="section-header">
         <h2 class="section-title">My Comics</h2>
-        <a href="/create" class="create-btn">+ Create New</a>
+        <button on:click={handleCreateClick} class="create-btn">+ Create New</button>
       </div>
       
       {#if userComics.length > 0}
@@ -142,7 +158,7 @@
           <div class="empty-icon">📚</div>
           <h3 class="empty-title">No comics yet</h3>
           <p class="empty-description">Start creating your first motion comic!</p>
-          <a href="/create" class="primary-btn">Create Your First Comic</a>
+          <button on:click={handleCreateClick} class="primary-btn">Create Your First Comic</button>
         </div>
       {/if}
     </div>
@@ -153,7 +169,7 @@
     <div class="cta-content">
       <h2 class="cta-title">Ready to Create?</h2>
       <p class="cta-description">Join thousands of creators bringing their stories to life with motion comics</p>
-      <a href="/create" class="primary-btn large">Get Started Now</a>
+      <button on:click={handleCreateClick} class="primary-btn large">Get Started Now</button>
     </div>
   </div>
 </div>

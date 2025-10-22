@@ -36,6 +36,14 @@
     if (error) console.error('Error:', error.message);
   }
 
+  function goToLogin() {
+    window.location.href = '/login';
+  }
+
+  function goToRegister() {
+    window.location.href = '/register';
+  }
+
   const navigationItems = [
     { name: 'Home', href: '/', icon: Home },
     { name: 'Explore', href: '/explore', icon: Search },
@@ -66,9 +74,15 @@
         {/each}
         
         {#if session}
-          <button on:click={signOut} class="auth-btn">Sign Out</button>
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-white opacity-90">{session.user.email}</span>
+            <button on:click={signOut} class="auth-btn">Sign Out</button>
+          </div>
         {:else}
-          <button on:click={signInWithGoogle} class="auth-btn">Sign In</button>
+          <div class="flex items-center space-x-2">
+            <button on:click={goToLogin} class="auth-btn">Sign In</button>
+            <button on:click={goToRegister} class="auth-btn">Sign Up</button>
+          </div>
         {/if}
       </nav>
     </div>
