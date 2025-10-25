@@ -3,8 +3,10 @@
   import { supabase, assets as assetHelpers } from '$lib/supabase';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import { Search, Filter, Grid, List, Heart, Upload, Eye } from 'lucide-svelte';
+  import { Search, Filter, Grid, List, Heart, Upload, Eye, Plus, X } from 'lucide-svelte';
   import type { Asset, AssetCategory, User, ViewMode } from '$lib/types';
+  import AssetUpload from '$lib/components/AssetUpload.svelte';
+  import AssetPreview from '$lib/components/AssetPreview.svelte';
   
   let searchQuery: string = '';
   let selectedCategory: string = '';
@@ -14,6 +16,12 @@
   let loading: boolean = true;
   let error: string = '';
   let user: User | null = null;
+  let showUploadModal: boolean = false;
+  let useRealData: boolean = false;
+  let showPreviewModal: boolean = false;
+  let selectedAsset: Asset | null = null;
+  let sortBy: 'name' | 'date' | 'size' | 'category' = 'date';
+  let sortOrder: 'asc' | 'desc' = 'desc';
   
   // Mock data for now - will be replaced with real data from Supabase
   const mockAssets: Asset[] = [
@@ -112,49 +120,64 @@
       const { data: { user: currentUser } } = await supabase.auth.getUser();
       user = currentUser;
       
-      // Load asset categories
-      const { data: categoriesData, error: categoriesError } = await supabase
-        .from('asset_categories')
-        .select('*')
-        .order('name');
-      
-      if (categoriesError) {
-        console.error('Error loading categories:', categoriesError);
+      // Try to load real data first
+      try {
+        // Load asset categories
+        const { data: categoriesData, error: categoriesError } = await supabase
+          .from('asset_categories')
+          .select('*')
+          .order('name');
+        
+        if (categoriesError) {
+          throw new Error(`Categories error: ${categoriesError.message}`);
+        }
+
+        // Load assets
+        const { data: assetsData, error: assetsError } = await supabase
+          .from('assets')
+          .select(`
+            *,
+            asset_categories(name),
+            user_favorites!left(user_id)
+          `)
+          .eq('is_public', true)
+          .order('created_at', { ascending: false });
+        
+        if (assetsError) {
+          throw new Error(`Assets error: ${assetsError.message}`);
+        }
+
+        // If we have real data, use it
+        if (assetsData && assetsData.length > 0) {
+          useRealData = true;
+          assets = assetsData.map((asset: any) => ({
+            ...asset,
+            category: asset.asset_categories?.name || 'Uncategorized',
+            is_favorite: asset.user_favorites?.length > 0,
+            thumbnail: asset.public_url // Use real image URLs
+          }));
+
+          categories = [
+            { id: 'all', name: 'All Categories', count: assets.length, created_at: new Date().toISOString() },
+            ...(categoriesData || []).map((cat: any) => ({ 
+              id: cat.id, 
+              name: cat.name, 
+              count: assets.filter(asset => asset.category_id === cat.id).length,
+              created_at: cat.created_at
+            }))
+          ];
+        } else {
+          // No real data yet, use mock data
+          useRealData = false;
+          assets = mockAssets;
+          categories = mockCategories;
+        }
+      } catch (err) {
+        console.error('Error loading real data:', err);
         // Fallback to mock data
-        categories = mockCategories;
-      } else {
-        categories = [
-          { id: 'all', name: 'All Categories', count: 0, created_at: new Date().toISOString() },
-          ...(categoriesData || []).map((cat: any) => ({ 
-            id: cat.id, 
-            name: cat.name, 
-            count: 0,
-            created_at: cat.created_at
-          }))
-        ];
-      }
-      
-      // Load assets
-      const { data: assetsData, error: assetsError } = await supabase
-        .from('assets')
-        .select(`
-          *,
-          asset_categories(name),
-          user_favorites!left(user_id)
-        `)
-        .eq('is_public', true)
-        .order('created_at', { ascending: false });
-      
-      if (assetsError) {
-        console.error('Error loading assets:', assetsError);
-        // Fallback to mock data
+        useRealData = false;
         assets = mockAssets;
-      } else {
-        assets = (assetsData || []).map((asset: any) => ({
-          ...asset,
-          category: asset.asset_categories?.name || 'Uncategorized',
-          is_favorite: asset.user_favorites?.length > 0
-        }));
+        categories = mockCategories;
       }
       
       // Update category counts
@@ -177,22 +200,46 @@
   });
   
   function handleSearch(): void {
-    // Filter assets based on search query
+    // Enhanced search functionality
     if (!searchQuery.trim()) {
       // Reset to category filter
       handleCategoryFilter(selectedCategory);
       return;
     }
     
+    const searchLower = searchQuery.toLowerCase();
     const filteredAssets = assets.filter(asset => 
-      asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      asset.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      asset.name.toLowerCase().includes(searchLower) ||
+      asset.description?.toLowerCase().includes(searchLower) ||
+      asset.tags?.some(tag => tag.toLowerCase().includes(searchLower)) ||
+      asset.category?.toLowerCase().includes(searchLower)
     );
     
     // Apply category filter if selected
     if (selectedCategory && selectedCategory !== 'all') {
       assets = filteredAssets.filter(asset => asset.category_id === selectedCategory);
     } else {
+      assets = filteredAssets;
+    }
+  }
+
+  // Real-time search with reactive statement
+  $: if (searchQuery || selectedCategory) {
+    const searchLower = searchQuery.toLowerCase();
+    const filteredAssets = assets.filter(asset => {
+      const matchesSearch = !searchQuery || 
+        asset.name.toLowerCase().includes(searchLower) ||
+        asset.description?.toLowerCase().includes(searchLower) ||
+        asset.tags?.some(tag => tag.toLowerCase().includes(searchLower)) ||
+        asset.category?.toLowerCase().includes(searchLower);
+      
+      const matchesCategory = selectedCategory === 'all' || asset.category_id === selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    });
+    
+    // Update the displayed assets
+    if (filteredAssets.length !== assets.length) {
       assets = filteredAssets;
     }
   }
@@ -206,9 +253,19 @@
     }
   }
   
-  function handleAssetClick(assetId: string): void {
-    // For now, just show an alert
-    alert(`Asset ${assetId} clicked! This will open the asset details.`);
+  function handleAssetClick(asset: Asset): void {
+    selectedAsset = asset;
+    showPreviewModal = true;
+  }
+
+  function closePreviewModal(): void {
+    showPreviewModal = false;
+    selectedAsset = null;
+  }
+
+  function handleAssetFavorite(event: CustomEvent<{ asset: Asset }>): void {
+    const asset = event.detail.asset;
+    toggleFavorite(asset.id);
   }
   
   function toggleViewMode(): void {
@@ -265,8 +322,59 @@
       return;
     }
     
-    // For now, just show an alert
-    alert('Asset upload feature coming soon!');
+    showUploadModal = true;
+  }
+
+  function handleAssetUploaded(event: CustomEvent<{ asset: Asset }>): void {
+    // Add the new asset to the list
+    assets = [event.detail.asset, ...assets];
+    
+    // Update category counts
+    categories = categories.map(cat => {
+      if (cat.id === 'all') {
+        return { ...cat, count: assets.length };
+      }
+      return { ...cat, count: assets.filter(asset => asset.category_id === cat.id).length };
+    });
+    
+    // Close modal
+    showUploadModal = false;
+  }
+
+  function handleUploadError(event: CustomEvent<{ message: string }>): void {
+    error = event.detail.message;
+  }
+
+  function closeUploadModal(): void {
+    showUploadModal = false;
+  }
+
+  function handleSort(): void {
+    assets = [...assets].sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'date':
+          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          break;
+        case 'size':
+          comparison = (a.file_size || 0) - (b.file_size || 0);
+          break;
+        case 'category':
+          comparison = (a.category || '').localeCompare(b.category || '');
+          break;
+      }
+      
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  // Reactive sorting
+  $: if (sortBy || sortOrder) {
+    handleSort();
   }
 </script>
 
@@ -316,6 +424,23 @@
           {/each}
         </div>
       </div>
+
+      <div class="sort-controls">
+        <span class="sort-label">Sort by:</span>
+        <select bind:value={sortBy} class="sort-select">
+          <option value="date">Date</option>
+          <option value="name">Name</option>
+          <option value="size">Size</option>
+          <option value="category">Category</option>
+        </select>
+        <button 
+          class="sort-order-btn"
+          on:click={() => sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'}
+          title="Toggle sort order"
+        >
+          {sortOrder === 'asc' ? '↑' : '↓'}
+        </button>
+      </div>
       
       <div class="view-controls">
         <button 
@@ -336,8 +461,8 @@
             on:click={handleUpload}
             title="Upload new asset"
           >
-            <Upload size={16} />
-            Upload
+            <Plus size={16} />
+            Upload Assets
           </button>
         {/if}
       </div>
@@ -361,11 +486,15 @@
       {#each assets as asset}
         <div class="asset-card" class:list-item={viewMode === 'list'}>
           <div class="asset-thumbnail">
-            <div class="thumbnail-placeholder">{asset.thumbnail}</div>
+            {#if asset.thumbnail && asset.thumbnail.startsWith('http')}
+              <img src={asset.thumbnail} alt={asset.name} class="asset-image" />
+            {:else}
+              <div class="thumbnail-placeholder">{asset.thumbnail || '📦'}</div>
+            {/if}
             <div class="asset-overlay">
               <button 
                 class="overlay-btn preview-btn"
-                on:click={() => handleAssetClick(asset.id)}
+                on:click={() => handleAssetClick(asset)}
                 title="Preview asset"
               >
                 <Eye size={16} />
@@ -397,6 +526,40 @@
           </div>
         </div>
       {/each}
+    </div>
+  {/if}
+
+  <!-- Upload Modal -->
+  {#if showUploadModal}
+    <div class="modal-overlay" on:click={closeUploadModal}>
+      <div class="modal-content" on:click|stopPropagation>
+        <div class="modal-header">
+          <h2 class="modal-title">Upload Assets</h2>
+          <button class="modal-close" on:click={closeUploadModal}>
+            <X size={20} />
+          </button>
+        </div>
+        <div class="modal-body">
+          <AssetUpload 
+            on:upload={handleAssetUploaded}
+            on:error={handleUploadError}
+          />
+        </div>
+      </div>
+    </div>
+  {/if}
+
+  <!-- Asset Preview Modal -->
+  {#if showPreviewModal && selectedAsset}
+    <div class="modal-overlay" on:click={closePreviewModal}>
+      <div class="modal-content" on:click|stopPropagation>
+        <AssetPreview 
+          asset={selectedAsset}
+          isFavorite={selectedAsset.is_favorite || false}
+          on:favorite={handleAssetFavorite}
+          on:close={closePreviewModal}
+        />
+      </div>
     </div>
   {/if}
 </div>
@@ -483,6 +646,44 @@
     align-items: center;
     gap: 0.75rem;
     flex-wrap: wrap;
+  }
+
+  .sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+  }
+
+  .sort-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  .sort-select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    background: white;
+  }
+
+  .sort-order-btn {
+    padding: 0.5rem;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .sort-order-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
   }
 
   .filter-icon {
@@ -656,6 +857,13 @@
     opacity: 0.7;
   }
 
+  .asset-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+
   .asset-overlay {
     position: absolute;
     top: 0;
@@ -769,5 +977,64 @@
       margin-right: 0;
       margin-bottom: 1rem;
     }
+  }
+
+  /* Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+  }
+
+  .modal-close {
+    padding: 0.5rem;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 0.5rem;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .modal-close:hover {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
   }
 </style>
